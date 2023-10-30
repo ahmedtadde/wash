@@ -358,6 +358,10 @@ fn integration_claims_call_alias() {
             logger.to_str().unwrap(),
             "--name",
             "Logger",
+            "-v",
+            "0.1.0",
+            "-r",
+            "1",
             "-l",
             "-q",
             "--issuer",
@@ -401,7 +405,8 @@ fn integration_claims_call_alias() {
         "capabilities": ["HTTP Server", "Logging"],
         "expires": "never",
         "tags": "None",
-        "version": "None",
+        "version": "0.1.0",
+        "revision": 1,
         "call_alias": "wasmcloud/logger_onedotzero"
     });
 
