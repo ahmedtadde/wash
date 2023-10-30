@@ -40,6 +40,10 @@ fn integration_claims_sign() {
             echo.to_str().unwrap(),
             "--name",
             "EchoSigned",
+            "--ver",
+            "0.1.0",
+            "--rev",
+            "1",
             "--http_server",
             "--issuer",
             ISSUER,
@@ -59,6 +63,91 @@ fn integration_claims_sign() {
             signed_wasm_path.to_str().unwrap()
         )
     );
+
+    // signing should fail when revision or/and version are not provided
+    let sign_echo = wash()
+        .args([
+            "claims",
+            "sign",
+            echo.to_str().unwrap(),
+            "--name",
+            "EchoSigned",
+            "--ver",
+            "0.1.0",
+            // "--rev",
+            // "1",
+            "--http_server",
+            "--issuer",
+            ISSUER,
+            "--subject",
+            SUBJECT,
+            "--disable-keygen",
+            "--destination",
+            signed_wasm_path.to_str().unwrap(),
+        ])
+        .stderr(std::process::Stdio::piped())
+        .output()
+        .expect("faile to run sign command");
+    assert!(!sign_echo.status.success());
+    assert!(String::from_utf8(sign_echo.stderr)
+        .expect("Failed to convert stderr bytes to String")
+        .contains("revision (--rev) must be specified for signing"));
+
+    let sign_echo = wash()
+        .args([
+            "claims",
+            "sign",
+            echo.to_str().unwrap(),
+            "--name",
+            "EchoSigned",
+            // "--ver",
+            // "0.1.0",
+            "--rev",
+            "1",
+            "--http_server",
+            "--issuer",
+            ISSUER,
+            "--subject",
+            SUBJECT,
+            "--disable-keygen",
+            "--destination",
+            signed_wasm_path.to_str().unwrap(),
+        ])
+        .stderr(std::process::Stdio::piped())
+        .output()
+        .expect("faile to run sign command");
+    assert!(!sign_echo.status.success());
+    assert!(String::from_utf8(sign_echo.stderr)
+        .expect("Failed to convert stderr bytes to String")
+        .contains("version (--ver) must be specified for signing"));
+
+    let sign_echo = wash()
+        .args([
+            "claims",
+            "sign",
+            echo.to_str().unwrap(),
+            "--name",
+            "EchoSigned",
+            // "--ver",
+            // "0.1.0",
+            // "--rev",
+            // "1",
+            "--http_server",
+            "--issuer",
+            ISSUER,
+            "--subject",
+            SUBJECT,
+            "--disable-keygen",
+            "--destination",
+            signed_wasm_path.to_str().unwrap(),
+        ])
+        .stderr(std::process::Stdio::piped())
+        .output()
+        .expect("faile to run sign command");
+    assert!(!sign_echo.status.success());
+    assert!(String::from_utf8(sign_echo.stderr)
+        .expect("Failed to convert stderr bytes to String")
+        .contains("revision (--rev) and version (--ver) must be specified for signing"));
 
     remove_dir_all(sign_dir).unwrap();
 }
